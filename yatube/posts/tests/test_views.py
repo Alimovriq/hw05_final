@@ -1,8 +1,8 @@
-import shutil
-import tempfile
+# import shutil
+# import tempfile
 
 from django import forms
-from django.conf import settings
+# from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -11,7 +11,7 @@ from django.urls import reverse
 
 from ..models import Comment, Group, Post, Follow
 
-TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.MEDIA_ROOT)
+# TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.MEDIA_ROOT)
 User = get_user_model()
 
 
@@ -77,7 +77,7 @@ class PostViewTests(TestCase):
         # создание, удаление, копирование,
         # перемещение, изменение папок и файлов
         # Метод shutil.rmtree удаляет директорию и всё её содержимое
-        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        # shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
         # Создаем неавторизованный клиент
