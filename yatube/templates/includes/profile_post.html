@@ -2,7 +2,7 @@
 <article>
     <ul>
       <li>
-        Автор: {{ user_info.last_name }} {{ user_info.first_name }} 
+        Автор: {{ user.last_name }} {{ user.first_name }} 
         <a href="{% url 'posts:profile' post.author.username %}">все посты пользователя</a>
       </li>
       <li>
