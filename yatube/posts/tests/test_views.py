@@ -239,7 +239,7 @@ class PostViewTests(TestCase):
         # Взяли первый элемент из списка и проверили, что его содержание
         # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
-        author = response.context['user']
+        author = response.context['author']
         self.assertEqual(author.first_name,
                          self.post_2.author.first_name)
         self.assertEqual(posts.text,
@@ -254,7 +254,7 @@ class PostViewTests(TestCase):
         # Взяли первый элемент из списка и проверили, что его содержание
         # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
-        author = response.context['user']
+        author = response.context['author']
         self.assertEqual(author.first_name,
                          self.post_2.author.first_name)
         self.assertEqual(posts.text,
@@ -268,7 +268,7 @@ class PostViewTests(TestCase):
         # Взяли первый элемент из списка и проверили, что его содержание
         # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
-        author = response.context['user']
+        author = response.context['author']
         self.assertEqual(author.first_name,
                          self.post_2.author.first_name)
         self.assertEqual(posts.text,

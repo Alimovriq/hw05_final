@@ -41,8 +41,9 @@ def group_posts(request, slug):
 
 def profile(request, username):
     template = 'posts/profile.html'
-    user = get_object_or_404(User, username=username)
-    user_posts = user.posts.select_related('group')
+    # Тесты на сайте: "проверьте, что передали автора"
+    author = get_object_or_404(User, username=username)
+    author_posts = author.posts.select_related('group')
     # if request.user.is_authenticated:
     #     following = Follow.objects.filter(
     #         user=request.user, author=user
@@ -50,12 +51,12 @@ def profile(request, username):
     # else:
     #     following = False
     following = Follow.objects.filter(
-        user__username=request.user, author=user)
+        user__username=request.user, author=author)
     context = {
-        'user': user,
+        'author': author,
         'following': following,
     }
-    context.update(paginator(user_posts, request))
+    context.update(paginator(author_posts, request))
     return render(request, template, context)
 
 
