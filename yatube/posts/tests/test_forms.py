@@ -10,8 +10,6 @@ from django.urls import reverse
 from ..forms import PostForm
 from ..models import Comment, Group, Post
 
-# Создаем временную папку для медиа-файлов;
-# на момент теста медиа папка будет переопределена
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 User = get_user_model()
 
@@ -37,21 +35,12 @@ class PostFormTests(TestCase):
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
-        # Модуль shutil - библиотека Python с удобными инструментами
-        # для управления файлами и директориями:
-        # создание, удаление, копирование,
-        # перемещение, изменение папок и файлов
-        # Метод shutil.rmtree удаляет директорию и всё её содержимое
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        # Создаем пользователя
         self.user = User.objects.create_user(username='HasNoName')
-        # Создаем второй клиент
         self.authorized_client = Client()
-        # Авторизуем этого пользователя (Не автор, 'HasNoName')
         self.authorized_client.force_login(self.user)
 
     def test_create_img_post_authorized_user(self):
@@ -75,7 +64,6 @@ class PostFormTests(TestCase):
             'text': 'Запись от Авторизованного юзера',
             'image': uploaded,
         }
-        # Отправляем POST-запрос
         response = self.authorized_client.post(
             reverse('posts:post_create'),
             data=form_data,
@@ -99,7 +87,6 @@ class PostFormTests(TestCase):
             'group': self.group_1.id,
             'text': 'Запись от Авторизованного юзера',
         }
-        # Отправляем POST-запрос
         response = self.authorized_client.post(
             reverse('posts:post_create'),
             data=form_data,
@@ -151,11 +138,6 @@ class PostFormTests(TestCase):
             group=self.group_1
         ).exists()
         )
-        # self.assertFalse(Post.objects.filter(
-        #     text=form_data['text'],
-        #     group=self.group_1
-        # ).exists()
-        # )
 
     def test_create_post_guest_user(self):
         """Пост не созданный Гостем."""
@@ -196,7 +178,6 @@ class PostFormTests(TestCase):
             'text': 'Запись от Гостя',
             'image': uploaded,
         }
-        # Отправляем POST-запрос
         self.guest_client.post(
             reverse('posts:post_create'),
             data=form_data,
@@ -213,9 +194,7 @@ class PostFormTests(TestCase):
 
     def test_create_comment_authorized_user(self):
         """Комментарий созданный Авторизованным юзером."""
-        # переменная для подсчета комментов
         comments_count = Comment.objects.count()
-        # создаем новый пост , который будем комментить
         form_data = {
             'text': 'Запись от Авторизованного юзера',
             'group': self.group_1.id,
@@ -239,9 +218,7 @@ class PostFormTests(TestCase):
 
     def test_create_comment_guest_user(self):
         """Комментарий не созданный Гостем."""
-        # переменная для подсчета комментов
         comments_count = Comment.objects.count()
-        # создаем новый пост , который будем комментить
         form_data = {
             'text': 'Запись от Авторизованного юзера',
             'group': self.group_1.id,

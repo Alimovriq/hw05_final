@@ -8,7 +8,6 @@
 {% endblock %}
 {% block content %}
 {% load user_filters %}
-
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-md-8 p-5">
@@ -35,15 +34,8 @@
             </div>
           {% endfor %}
       {% endif %}
-
       <form method="post" enctype="multipart/form-data">
-      {% comment %} {% if is_edit %} 
-      {% url 'posts:post_edit' post.id %}
-      {% else %}
-      {% url 'posts:post_create' %}
-      {% endif %} {% endcomment %}
         {% csrf_token %}
-
         {% for field in form %} 
         <div class="form-group row my-3">
           <label for="{{ field.id_for_label }}">
@@ -52,7 +44,6 @@
                 <span class="required text-danger">*</span>
               {% endif %}
           </label>
-          {# К полю ввода добавляем атрибут class #}
           {{ field|addclass:'form-control' }} 
             {% if field.help_text %}
               <small 
@@ -74,7 +65,7 @@
         </button>
       </div>
     </form>
-  </div> <!-- card body -->
-</div> <!-- card -->
+  </div>
+</div>
 {% include 'includes/paginator.html' %}
 {% endblock %}

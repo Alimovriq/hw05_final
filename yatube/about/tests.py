@@ -12,7 +12,6 @@ class AboutUrlTests(TestCase):
         super().setUpClass()
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
 
     def test_about_urls_for_all(self):

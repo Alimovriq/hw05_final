@@ -9,7 +9,6 @@ from .forms import CommentForm, PostForm
 from .models import Follow, Group, Post
 
 
-# Пагинатор.
 def paginator(posts, request):
     paginator = Paginator(posts, settings.POSTS_LIMIT)
     page_number = request.GET.get('page')
@@ -19,7 +18,6 @@ def paginator(posts, request):
     }
 
 
-# Главная страница.
 def index(request):
     template = 'posts/index.html'
     posts = Post.objects.select_related('group', 'author')
@@ -27,7 +25,6 @@ def index(request):
     return render(request, template, context)
 
 
-# Посты, отфильтрованные по группам.
 def group_posts(request, slug):
     template = 'posts/group_list.html'
     group = get_object_or_404(Group, slug=slug)
@@ -41,17 +38,10 @@ def group_posts(request, slug):
 
 def profile(request, username):
     template = 'posts/profile.html'
-    # Тесты на сайте: "проверьте, что передали автора"
     author = get_object_or_404(User, username=username)
     author_posts = author.posts.select_related('group')
-    # if request.user.is_authenticated:
-    #     following = Follow.objects.filter(
-    #         user=request.user, author=user
-    #     ).exists()
-    # else:
-    #     following = False
-    following = Follow.objects.filter(
-        user__username=request.user, author=author)
+    following = request.user.is_authenticated and Follow.objects.filter(
+        user__username=request.user, author=author).exists()
     context = {
         'author': author,
         'following': following,
@@ -77,7 +67,6 @@ def post_detail(request, post_id):
 def post_create(request):
     template = 'posts/create_post.html'
     form = PostForm(request.POST or None, files=request.FILES or None)
-    # if request.method == 'POST':
     if form.is_valid():
         post = form.save(commit=False)
         post.author = request.user
@@ -108,11 +97,9 @@ def post_edit(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
-    # Получите пост
     template = 'includes/comments.html'
     post = get_object_or_404(Post, id=post_id)
     form = CommentForm(request.POST or None)
-    # if request.method == 'POST':
     if form.is_valid():
         comment = form.save(commit=False)
         comment.author = request.user
@@ -128,7 +115,6 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
-    # информация о текущем пользователе доступна в переменной request.user
     template = 'posts/follow.html'
     posts = Post.objects.filter(author__following__user=request.user)
     context = paginator(posts, request)
@@ -137,22 +123,15 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
-    # Подписаться на автора
-    current_user = request.user
     following = User.objects.get(username=username)
-    # follower = Follow.objects.filter(user=current_user, author=following)
-    # if current_user != following and not follower.exists():
-    #     Follow.objects.create(user=current_user, author=following)
-    if current_user != following:
-        Follow.objects.get_or_create(user=current_user, author=following)
+    if request.user != following:
+        Follow.objects.get_or_create(user=request.user, author=following)
     return redirect('posts:profile', username=username)
 
 
 @login_required
 def profile_unfollow(request, username):
-    # Дизлайк, отписка
-    # current_user = request.user
     following = get_object_or_404(User, username=username)
-    follower = Follow.objects.filter(user=request.user, author=following)
-    follower.delete()
+    Follow.objects.filter(
+        user=request.user, author=following).delete()
     return redirect('posts:profile', username=username)

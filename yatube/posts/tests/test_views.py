@@ -1,8 +1,4 @@
-# import shutil
-# import tempfile
-
 from django import forms
-# from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -11,11 +7,9 @@ from django.urls import reverse
 
 from ..models import Comment, Group, Post, Follow
 
-# TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.MEDIA_ROOT)
 User = get_user_model()
 
 
-# @override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PostViewTests(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -72,32 +66,18 @@ class PostViewTests(TestCase):
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
-        # Модуль shutil - библиотека Python с удобными инструментами
-        # для управления файлами и директориями:
-        # создание, удаление, копирование,
-        # перемещение, изменение папок и файлов
-        # Метод shutil.rmtree удаляет директорию и всё её содержимое
-        # shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        # Создаем пользователя
         self.user = User.objects.create_user(username='HasNoName')
-        # Создаем второй клиент
         self.authorized_client = Client()
-        # Авторизуем этого пользователя (Не автор, 'HasNoName')
         self.authorized_client.force_login(self.user)
-        # Создаем третий клиент
         self.author_client = Client()
-        # Ссылаемся на пользователя (Автор, 'Author_1')
         self.user_author = self.post_1.author
-        # Авторизуем пользователя (Автор, 'Author_1')
         self.author_client.force_login(self.user_author)
 
     def test_posts_pages_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
-        # Собираем в словарь пары "reverse(name): имя_html_шаблона"
         templates_pages_names = {
             reverse('posts:index'): 'posts/index.html',
             reverse(
@@ -113,7 +93,6 @@ class PostViewTests(TestCase):
                 'post_id': self.post_1.id}): 'posts/create_post.html'
         }
 
-        # Проверяем, что при обращении к name вызывается соответствующий шаблон
         for reverse_name, template in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
                 response = self.author_client.get(reverse_name)
@@ -122,25 +101,17 @@ class PostViewTests(TestCase):
     def test_posts_index_show_correct_context_for_guest(self):
         """Шаблон index сформирован с правильным контекстом для Гостя."""
         response = self.guest_client.get(reverse('posts:index'))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         first_object = response.context['page_obj'][0]
         self.assertEqual(first_object.author.first_name,
                          self.post_2.author.first_name)
         self.assertEqual(first_object.text,
                          self.post_2.text)
         self.assertEqual(first_object.image, self.post_2.image)
-        # self.assertTrue(first_object.image, self.post_2.image)
-        # self.assertEqual(first_object.image, 'posts/small.gif')
-        # self.assertTrue(Post.objects.get(
-        #     Post.objects.get(image='posts/small.gif')))
 
     def test_posts_index_show_correct_context_for_authorized_user(self):
         """Шаблон index сформирован
         с правильным контекстом для Авторизованного пользователя."""
         response = self.authorized_client.get(reverse('posts:index'))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         first_object = response.context['page_obj'][0]
         self.assertEqual(first_object.author.first_name,
                          self.post_2.author.first_name)
@@ -151,8 +122,6 @@ class PostViewTests(TestCase):
     def test_posts_index_show_correct_context_for_author_user(self):
         """Шаблон index сформирован с правильным контекстом для Автора."""
         response = self.author_client.get(reverse('posts:index'))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         first_object = response.context['page_obj'][0]
         self.assertEqual(first_object.author.first_name,
                          self.post_2.author.first_name)
@@ -164,8 +133,6 @@ class PostViewTests(TestCase):
         """Шаблон group_list сформирован с правильным контекстом для Гостя."""
         response = self.guest_client.get(reverse('posts:group_list', kwargs={
             'slug': self.post_2.group.slug}))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
         group = response.context['group']
         self.assertEqual(posts.author.first_name,
@@ -183,8 +150,6 @@ class PostViewTests(TestCase):
         правильным контекстом для Авторизованного пользователя."""
         response = self.authorized_client.get(reverse(
             'posts:group_list', kwargs={'slug': self.post_2.group.slug}))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
         group = response.context['group']
         self.assertEqual(posts.author.first_name,
@@ -201,8 +166,6 @@ class PostViewTests(TestCase):
         """Шаблон group_list сформирован с правильным контекстом для Автора."""
         response = self.author_client.get(reverse('posts:group_list', kwargs={
             'slug': self.post_2.group.slug}))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
         group = response.context['group']
         self.assertEqual(posts.author.first_name,
@@ -236,8 +199,6 @@ class PostViewTests(TestCase):
         """Шаблон profile сформирован с правильным контекстом для Гостя."""
         response = self.guest_client.get(reverse('posts:profile', kwargs={
             'username': self.post_2.author.username}))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
         author = response.context['author']
         self.assertEqual(author.first_name,
@@ -251,8 +212,6 @@ class PostViewTests(TestCase):
         правильным контекстом для Авторизованного пользователя."""
         response = self.authorized_client.get(reverse('posts:profile', kwargs={
             'username': self.post_2.author.username}))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
         author = response.context['author']
         self.assertEqual(author.first_name,
@@ -265,8 +224,6 @@ class PostViewTests(TestCase):
         """Шаблон profile сформирован с правильным контекстом для Автора."""
         response = self.author_client.get(reverse('posts:profile', kwargs={
             'username': self.post_2.author.username}))
-        # Взяли первый элемент из списка и проверили, что его содержание
-        # совпадает с ожидаемым
         posts = response.context['page_obj'][0]
         author = response.context['author']
         self.assertEqual(author.first_name,
@@ -330,8 +287,6 @@ class PostViewTests(TestCase):
         for value, expected in form_fields.items():
             with self.subTest(value=value):
                 form_field = response.context.get('form').fields.get(value)
-                # Проверяет, что поле формы является экземпляром
-                # указанного класса
                 self.assertIsInstance(form_field, expected)
 
     def test_posts_create_post_show_correct_context_for_authorized_user(self):
@@ -347,8 +302,6 @@ class PostViewTests(TestCase):
         for value, expected in form_fields.items():
             with self.subTest(value=value):
                 form_field = response.context.get('form').fields.get(value)
-                # Проверяет, что поле формы является экземпляром
-                # указанного класса
                 self.assertIsInstance(form_field, expected)
 
     def test_posts_create_post_page_show_correct_context_for_author_user(self):
@@ -364,13 +317,10 @@ class PostViewTests(TestCase):
         for value, expected in form_fields.items():
             with self.subTest(value=value):
                 form_field = response.context.get('form').fields.get(value)
-                # Проверяет, что поле формы является экземпляром
-                # указанного класса
                 self.assertIsInstance(form_field, expected)
 
 
 class PaginatorViewsTest(TestCase):
-    # Здесь создаются фикстуры: клиент и 15 тестовых записей.
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -393,23 +343,15 @@ class PaginatorViewsTest(TestCase):
         Post.objects.bulk_create(cls.posts)
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        # Создаем пользователя
         self.user = User.objects.create_user(username='HasNoName')
-        # Создаем второй клиент
         self.authorized_client = Client()
-        # Авторизуем этого пользователя (Не автор, 'HasNoName')
         self.authorized_client.force_login(self.user)
-        # Создаем третий клиент
         self.author_client = Client()
-        # Ссылаемся на пользователя (Автор, 'Author_3')
         self.user_author = self.author_3
-        # Авторизуем пользователя (Автор, 'Author_3')
         self.author_client.force_login(self.user_author)
 
     def test_first_page_contains_ten_records(self):
-        # Собираем в словарь пары "reverse(name): имя_html_шаблона"
         templates_pages_names = {
             reverse('posts:index'): 'index',
             reverse(
@@ -424,7 +366,6 @@ class PaginatorViewsTest(TestCase):
                 response.context.get('page_obj').object_list), 10)
 
     def test_second_page_contains_five_records(self):
-        # Проверка: на второй странице должно быть пять постов.
         templates_pages_names = {
             reverse('posts:index') + '?page=2': 'index',
             reverse(
@@ -461,26 +402,12 @@ class CacheViewTests(TestCase):
         )
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        # Создаем пользователя
-        # self.user = User.objects.create_user(username='HasNoName')
-        # # Создаем второй клиент
-        # self.authorized_client = Client()
-        # # Авторизуем этого пользователя (Не автор, 'HasNoName')
-        # self.authorized_client.force_login(self.user)
-        # # Создаем третий клиент
-        # self.author_client = Client()
-        # # Ссылаемся на пользователя (Автор, 'Author_1')
-        # self.user_author = self.post_1.author
-        # # Авторизуем пользователя (Автор, 'Author_1')
-        # self.author_client.force_login(self.user_author)
 
     def test_posts_index_cache_for_guest(self):
         """Проверка кэширования на главной странице index."""
         response = self.guest_client.get(reverse('posts:index'))
         content_before = response.content
-        # post_1 = self.post_1
         post = Post.objects.create(
             group=self.post_1.group,
             author=self.post_1.author,
@@ -529,41 +456,30 @@ class FollowViewTests(TestCase):
         )
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        # Создаем пользователя
         self.user = User.objects.create_user(username='HasNoName')
-        # Создаем второй клиент
         self.authorized_client = Client()
-        # Авторизуем этого пользователя (Не автор, 'HasNoName')
         self.authorized_client.force_login(self.user)
-        # Создаем третий клиент
         self.author_client = Client()
 
     def test_follow_for_authorized_user(self):
         """Авторизованный пользователь может подписаться."""
-        # Посчитали подписчиков до подписки
         before = len(
             Follow.objects.all().filter(author_id=self.post_1.author.id))
-        # Авторизованный пользователь пробует подписаться
         self.authorized_client.get(reverse('posts:profile_follow', kwargs={
             'username': self.post_1.author.username}))
-        # Посчитали подписчиков после попытки подписаться пользователем
         after = len(
             Follow.objects.all().filter(author_id=self.post_1.author.id))
         self.assertEqual(after - 1, before)
 
     def test_unfollow_for_authorized_user(self):
         """Авторизованный пользователь может отписаться."""
-        # Посчитали подписчиков до подписки
         before = len(
             Follow.objects.all().filter(author_id=self.post_1.author.id))
-        # Авторизованный пользователь пробует подписаться и отписаться
         self.authorized_client.get(reverse('posts:profile_follow', kwargs={
             'username': self.post_1.author.username}))
         self.authorized_client.get(reverse('posts:profile_unfollow', kwargs={
             'username': self.post_1.author.username}))
-        # Посчитали подписчиков после попытки отписаться пользователем
         after = len(
             Follow.objects.all().filter(author_id=self.post_1.author.id))
         self.assertEqual(after + 0, before)
@@ -584,24 +500,18 @@ class FollowViewTests(TestCase):
 
     def test_follow_for_guest_user(self):
         """Гость не может подписаться."""
-        # Посчитали подписчиков до подписки
         before = len(
             Follow.objects.all().filter(user_id=self.post_1.author.id))
-        # Гость пробует подписаться
         self.guest_client.get(reverse('posts:profile_follow', kwargs={
             'username': self.post_1.author.username}))
-        # Посчитали подписчиков после попытки подписаться Гостем
         after = len(Follow.objects.all().filter(user_id=self.post_1.author.id))
         self.assertEqual(after + 0, before)
 
     def test_unfollow_for_guest_user(self):
         """Гость не может отписаться."""
-        # Посчитали подписчиков до подписки
         before = len(
             Follow.objects.all().filter(user_id=self.post_1.author.id))
-        # Гость пробует отписаться
         self.guest_client.get(reverse('posts:profile_unfollow', kwargs={
             'username': self.post_1.author.username}))
-        # Посчитали подписчиков после попытки отписаться Гостем
         after = len(Follow.objects.all().filter(user_id=self.post_1.author.id))
         self.assertEqual(after + 0, before)
