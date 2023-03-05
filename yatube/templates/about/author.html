@@ -4,13 +4,18 @@
 {% load static %}  
 <h1>Привет, меня зовут Ринат!</h1>
     <p>Обожаю рок, кофеин, скейт и теперь Python.<br>
-       <br>Еще в школе, мы с другом помогали преподователям с запуском и наладкой ПО и нам за это даже официально платили.<br>
-           Разбирался с запуском простых сайтов на CMS Joomla.<br>
+       <br>Еще в школе мы с другом помогали преподователям с запуском и наладкой ПО.<br>
+           Увлекался созданием простых сайтов на CMS Joomla.<br>
            Это было очень крутое время, но работал я всегда в сфере прямых продаж, а сегодня, я решил воплатить свою давнюю мечту и стать программистом Python.<br>
            Отдельная благодарность кошке, которая помогла написать часть кода, без тебя я бы не справился.<br>
-              <br><img src="{% static 'img/Summer.jpg' %}" alt="Саммэр" class="img-thumbnail">
-              <br>Спасибо, Саммэр.<br>
-              <br><img src="{% static 'img/cup.jpg' %}" alt="Кружка" class="img-thumbnail">
-              <br>А это - кружка.</p>
-              <a href="https://github.com/Alimovriq/" class="card-link">Мой GitHub</a>
+           <figure class="figure">
+            <img src="{% static 'img/Summer.jpg' %}" class="figure-img img-fluid rounded" alt="...">
+            <figcaption class="figure-caption text-end">Спасибо, Саммэр</figcaption>
+          </figure>
+          <br><figure class="figure">
+            <img src="{% static 'img/cup.jpg' %}" class="figure-img img-fluid rounded" alt="...">
+            <figcaption class="figure-caption text-end">Моя кружка</figcaption>
+        </figure>
+              <br><a href="https://github.com/Alimovriq/" class="card-link">Мой GitHub</a>
+
 {% endblock %}
