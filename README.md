@@ -1,7 +1,7 @@
 # Проект социальная сеть «Yatube»
 [![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
-[![sqlite](https://skillicons.dev/icons?i=sqlite)](https://sqlite.org/)]
-[![django](https://skillicons.dev/icons?i=django)](https://https://www.djangoproject.com/)]
+[![sqlite](https://skillicons.dev/icons?i=sqlite)](https://sqlite.org/)
+[![django](https://skillicons.dev/icons?i=django)](https://https://www.djangoproject.com/)
 
 ## Описание
  Социальная сеть с возможностью публикации записей с изображениями. Записи можно комментировать, на авторов подписываться и вступать в сообщества. Доступно восстановление пароля через почту. Настроены пагинация и кэширование. Код покрыт тестами.
